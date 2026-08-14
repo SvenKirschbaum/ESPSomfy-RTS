@@ -1794,13 +1794,13 @@ bool SomfyGroup::publish(const char *topic, bool val, bool retain) {
 float SomfyShade::p_currentPos(float pos) {
   float old = this->currentPos;
   this->currentPos = pos;
-  if(floor(old) != floor(pos)) this->publish("position", this->transformPosition(static_cast<uint8_t>(floor(this->currentPos))));
+  if(floor(old) != floor(pos)) this->publish("position", this->transformPosition(static_cast<uint8_t>(floor(this->currentPos))), true);
   return old;
 }
 float SomfyShade::p_currentTiltPos(float pos) {
   float old = this->currentTiltPos;
   this->currentTiltPos = pos;
-  if(floor(old) != floor(pos)) this->publish("tiltPosition", this->transformPosition(static_cast<uint8_t>(floor(this->currentTiltPos))));
+  if(floor(old) != floor(pos)) this->publish("tiltPosition", this->transformPosition(static_cast<uint8_t>(floor(this->currentTiltPos))), true);
   return old;
 }
 uint16_t SomfyShade::p_lastRollingCode(uint16_t code) {
@@ -4085,7 +4085,11 @@ bool SomfyShadeController::deleteGroup(uint8_t groupId) {
   return true;
 }
 
-bool SomfyShadeController::loadShadesFile(const char *filename) { return ShadeConfigFile::load(this, filename); }
+bool SomfyShadeController::loadShadesFile(const char *filename) {
+  bool loaded = ShadeConfigFile::load(this, filename);
+  if(loaded) this->publish();
+  return loaded;
+}
 uint16_t SomfyRemote::getNextRollingCode() {
   pref.begin("ShadeCodes");
   uint16_t code = pref.getUShort(this->m_remotePrefId, 0);

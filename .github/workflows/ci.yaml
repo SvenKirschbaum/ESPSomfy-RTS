@@ -94,6 +94,10 @@ jobs:
         with:
           name: LittleFS
 
+      - name: Run regression tests
+        run: |
+          python SomfyController/tests/test_mqtt_state.py
+
       - name: Install Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
